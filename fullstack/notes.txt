@@ -1,1 +1,0 @@
-sudo -u postgres createuser owning_user
