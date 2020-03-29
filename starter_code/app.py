@@ -25,8 +25,6 @@ app.config.from_object('config')
 db = SQLAlchemy(app)
 
 migrate = Migrate(app, db)
-# TODO: connect to a local postgresql database
-
 
 #----------------------------------------------------------------------------#
 # Models.
@@ -44,8 +42,8 @@ class Venue(db.Model):
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
-    # genres = db.Column(db.String(120))
+    # implement any missing fields, as a database migration using Flask-Migrate
+    genres = db.Column(db.String())
     seeking_talent = db.Column(db.Boolean())
     website = db.Column(db.String(500))
     seeking_description = db.Column(db.String(500))
@@ -60,7 +58,7 @@ class Venue(db.Model):
         'phone': self.phone,
         'image_link': self.image_link,
         'facebook_link': self.facebook_link,
-        # 'genres': self.genres,
+        'genres': self.genres.split(','),
         'seeking_talent': self.seeking_talent,
         'website': self.website,
         'seeking_description': self.seeking_description
@@ -74,10 +72,10 @@ class Artist(db.Model):
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
     phone = db.Column(db.String(120))
-    # genres = db.Column(db.String(120))
+    genres = db.Column(db.String())
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-  # TODO: implement any missing fields, as a database migration using Flask-Migrate
+  # implement any missing fields, as a database migration using Flask-Migrate
     website = db.Column(db.String(500))
     seeking_description = db.Column(db.String(500))
     seeking_venue = db.Column(db.Boolean())
@@ -91,7 +89,7 @@ class Artist(db.Model):
         'phone': self.phone,
         'image_link': self.image_link,
         'facebook_link': self.facebook_link,
-        # 'genres': self.genres,
+        'genres': self.genres.split(','),
         'seeking_venue': self.seeking_venue,
         'website': self.website,
         'seeking_description': self.seeking_description
@@ -100,15 +98,13 @@ class Artist(db.Model):
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
 class Show(db.Model):
-    __tablename__ = "Show"
-
+    __tablename__ = "Show" 
     id = db.Column(db.Integer, primary_key=True)
     start_time = db.Column(db.DateTime)
     artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'), nullable=False)
     venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'), nullable=False)
     artist = db.relationship("Artist")
     venue = db.relationship("Venue")
-
 
 
 #----------------------------------------------------------------------------#
@@ -375,6 +371,7 @@ def create_artist_submission():
       name = request.form['name'],
       city = request.form['city'],
       state = request.form['state'],
+      genres = request.form['genres'],
       phone = request.form['phone'],
       facebook_link=request.form['facebook_link'])
 
