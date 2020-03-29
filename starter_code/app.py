@@ -257,17 +257,22 @@ def artists():
 
 @app.route('/artists/search', methods=['POST'])
 def search_artists():
-  # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
-  # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
-  # search for "band" should return "The Wild Sax Band".
+  search = request.form.get('search_term')
+  num_artists = len(Artist.query.filter(Artist.name.ilike('%{}%'.format(search))).all())
+  artists = Artist.query.filter(Artist.name.ilike('%{}%'.format(search))).all()
+
+  search_result = []
+  for artist in artists:
+    search_result.append({
+      "id": artist.id,
+      "name": artist.name,
+    })  
+
   response={
-    "count": 1,
-    "data": [{
-      "id": 4,
-      "name": "Guns N Petals",
-      "num_upcoming_shows": 0,
-    }]
+    "count": num_artists,
+    "data": search_result,
   }
+
   return render_template('pages/search_artists.html', results=response, search_term=request.form.get('search_term', ''))
 
 @app.route('/artists/<int:artist_id>')
@@ -390,7 +395,7 @@ def shows():
   for show in shows:
     data.append({
       "venue_id": show.venue_id,
-      "venue_name": "The Musical Hop",
+      "venue_name": show.venue.name,
       "artist_id": show.artist_id,
       "artist_name": show.artist.name,
       "artist_image_link": show.artist.image_link,
@@ -407,8 +412,6 @@ def create_shows():
 
 @app.route('/shows/create', methods=['POST'])
 def create_show_submission():
-  # called to create new shows in the db, upon submitting new show listing form
-  # TODO: insert form data as a new Show record in the db, instead
   try:
     show = Show(
       artist_id = request.form['artist_id'],
