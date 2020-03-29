@@ -117,7 +117,7 @@ class Show(db.Model):
     __tablename__ = "Show"
 
     id = db.Column(db.Integer, primary_key=True)
-    time = db.Column(db.DateTime)
+    start_time = db.Column(db.DateTime)
     artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'), nullable=False)
     venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'), nullable=False)
 
@@ -153,27 +153,22 @@ def index():
 def venues():
   # TODO: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
-  data=[{
-    "city": "San Francisco",
-    "state": "CA",
-    "venues": [{
-      "id": 1,
-      "name": "The Musical Hop",
-      "num_upcoming_shows": 0,
-    }, {
-      "id": 3,
-      "name": "Park Square Live Music & Coffee",
-      "num_upcoming_shows": 1,
-    }]
-  }, {
-    "city": "New York",
-    "state": "NY",
-    "venues": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
-  }]
+
+  regions = Venue.query.with_entities(Venue.city, Venue.state).group_by(Venue.city, Venue.state).all()
+  flash(regions)
+  data = []
+
+  for region in regions:
+    region_venues = Venue.query.filter(Venue.city == region.city, Venue.state == region.state).all()
+    flash(region_venues)
+    venues = []
+    for venue in region_venues:
+      venues.append({
+        "id": venue.id,
+        "name": venue.name,
+        "num_upcoming_shows": len(Show.query.filter(Show.venue_id == venue.id, Show.start_time > datetime.now()).all())})
+    data.append({"city": region.city, "state": region.state, "venues": venues})
+
   return render_template('pages/venues.html', areas=data);
 
 @app.route('/venues/search', methods=['POST'])
@@ -346,10 +341,11 @@ def show_artist(artist_id):
 @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
 def edit_artist(artist_id):
   form = ArtistForm()
+
+  # artist = Artist.query.get(artist_id)
   artist={
-    "id": 4,
-    "name": "Guns N Petals",
-    "genres": ["Rock n Roll"],
+    "id": 2,
+    "name": "Guns Nfsdfds Petals",
     "city": "San Francisco",
     "state": "CA",
     "phone": "326-123-5000",
@@ -360,12 +356,25 @@ def edit_artist(artist_id):
     "image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80"
   }
   # TODO: populate form with fields from artist with ID <artist_id>
+
   return render_template('forms/edit_artist.html', form=form, artist=artist)
 
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
-  # TODO: take values from the form submitted, and update existing
-  # artist record with ID <artist_id> using the new attributes
+
+  current_artist = Artist.query.get(artist_id)
+  try:
+    current_artist.name = request.form['name']
+    current_artist.city = request.form['city']
+    current_artist.state = request.form['state']
+    current_artist.phone = request.form['phone']
+    current_artist.facebook_link =request.form['facebook_link']
+    current_artist
+    db.session.commit()
+  except:
+    db.session.rollback()
+  finally:
+    db.session.close()
 
   return redirect(url_for('show_artist', artist_id=artist_id))
 
