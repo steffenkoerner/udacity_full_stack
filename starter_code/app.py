@@ -5,6 +5,7 @@
 import json
 import dateutil.parser
 import babel
+import sys
 from flask import Flask, render_template, request, Response, flash, redirect, url_for, jsonify
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
@@ -36,13 +37,13 @@ class Venue(db.Model):
     __tablename__ = 'Venue'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
+    name = db.Column(db.String(100))
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
     address = db.Column(db.String(120))
-    phone = db.Column(db.String(120))
+    phone = db.Column(db.String(20))
     image_link = db.Column(db.String(500))
-    facebook_link = db.Column(db.String(120))
+    facebook_link = db.Column(db.String(500))
     # implement any missing fields, as a database migration using Flask-Migrate
     genres = db.Column(db.ARRAY(db.String(20)))
     seeking_talent = db.Column(db.Boolean())
@@ -70,14 +71,14 @@ class Artist(db.Model):
     __tablename__ = 'Artist'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
+    name = db.Column(db.String(100))
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
-    phone = db.Column(db.String(120))
+    phone = db.Column(db.String(20))
     db.Column(db.ARRAY(db.String(20)))
     image_link = db.Column(db.String(500))
     genres = db.Column(db.ARRAY(db.String(20)))
-    facebook_link = db.Column(db.String(120))
+    facebook_link = db.Column(db.String(500))
   # implement any missing fields, as a database migration using Flask-Migrate
     website = db.Column(db.String(500))
     seeking_description = db.Column(db.String(500))
@@ -241,12 +242,13 @@ def create_venue_submission():
             city=request.form['city'],
             state=request.form['state'],
             phone=request.form['phone'],
-            facebook_link=request.form['facebook_link'],
-            image_link=request.form['image_link'],
-            website=request.form['website'],
-            seeking_venue=True if request.form.get(
-                'seeking_venue') == 'y' else False,
-            seeking_description=request.form['seeking_description']
+            # # genres=request.form.getlist('genres'),
+            # facebook_link=request.form['facebook_link'],
+            # image_link=request.form['image_link'],
+            # website=request.form['website'],
+            # seeking_venue=True if request.form.get(
+            #     'seeking_venue') == 'y' else False,
+            # seeking_description=request.form['seeking_description']
 
         )
         db.session.add(venue)
@@ -256,6 +258,7 @@ def create_venue_submission():
         db.session.rollback()
         flash('An error occurred. Venue ' +
               request.form['name'] + ' could not be listed.')
+        print(sys.exc_info())
     finally:
         db.session.close()
 
@@ -269,6 +272,7 @@ def delete_venue(venue_id):
         db.session.commit()
     except:
         db.session.rollback()
+        print(sys.exc_info())
         return jsonify({'success': False})
     finally:
         db.session.close()
@@ -389,6 +393,7 @@ def edit_artist_submission(artist_id):
     except:
         db.session.rollback()
         flash("Failed")
+        print(sys.exc_info())
     finally:
         db.session.close()
 
@@ -417,11 +422,12 @@ def edit_venue(venue_id):
 
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
-    venue = Venue.query.get(artist_id)
+    venue = Venue.query.get(venue_id)
     try:
         venue.name = request.form['name']
         venue.city = request.form['city']
         venue.state = request.form['state']
+        venue.genres = request.form.getlist('genres')
         venue.phone = request.form['phone']
         venue.facebook_link = request.form['facebook_link']
         venue.image_link = request.form['image_link']
@@ -433,6 +439,7 @@ def edit_venue_submission(venue_id):
         db.session.commit()
     except:
         db.session.rollback()
+        print(sys.exc_info())
     finally:
         db.session.close()
 
@@ -450,14 +457,18 @@ def create_artist_form():
 
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
+    form = ArtistForm(request.form)
+    if not form.validate():
+        for error in form.errors:
+            flash(form.errors[error])
+        return render_template('forms/new_artist.html', form=form)
 
-    flash(request.form.getlist('genres'))
     try:
         artist = Artist(
             name=request.form['name'],
             city=request.form['city'],
             state=request.form['state'],
-            # genres=request.form.getlist('genres'),
+            genres=request.form.getlist('genres'),
             phone=request.form['phone'],
             facebook_link=request.form['facebook_link'],
             image_link=request.form['image_link'],
@@ -474,6 +485,7 @@ def create_artist_submission():
         db.session.rollback()
         flash('An error occurred. Artist ' +
               request.form['name'] + ' could not be listed.')
+        print(sys.exc_info())
     finally:
         db.session.close()
 
@@ -521,6 +533,7 @@ def create_show_submission():
     except:
         db.session.rollback()
         flash('An error occurred. Show could not be listed.')
+        print(sys.exc_info())
     finally:
         db.session.close()
 
