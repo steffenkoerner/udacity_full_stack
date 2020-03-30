@@ -95,6 +95,35 @@ class BaseForm(Form):
         'city', validators=[DataRequired(), Length(max=120, message="The input of city is too long")]
     )
 
+    state = SelectField(
+        'state', validators=[DataRequired()],
+        choices=states
+    )
+
+    phone = StringField('phone', validators=[DataRequired(), Length(
+        max=20, message="The input of phone is too long"), validate_phone])
+
+    facebook_link = StringField(
+        'facebook_link', validators=[URL(message="Please provid a correct facebook url"), Length(max=500, message="The input of facebook link is too long")]
+    )
+
+    image_link = StringField(
+        'image_link', validators=[URL("Please provid a correct image link url"), Length(max=500, message="The input of image link is too long")]
+    )
+
+    website = StringField(
+        'website', validators=[URL("Please provid a correct website link url"), Length(max=500, message="The input of website is too long")]
+    )
+
+    seeking_description = StringField(
+        'seeking_description', validators=[Length(max=500,  message="The input of seeking description is too long")]
+    )
+
+    genres = SelectMultipleField(
+        'genres', validators=[DataRequired()],
+        choices=genres
+    )
+
 
 class ShowForm(Form):
     artist_id = StringField(
@@ -112,88 +141,21 @@ class ShowForm(Form):
 
 
 class VenueForm(BaseForm):
-    # name = StringField('name', validators=[DataRequired(), Length(
-    #     max=100, message="The input of name is too long")])
 
-    # city = StringField(
-    #     'city', validators=[DataRequired(), Length(max=120, message="The input of city is too long")]
-    # )
-
-    state = SelectField(
-        'state', validators=[DataRequired()],
-        choices=states
-    )
     address = StringField(
         'address', validators=[DataRequired()]
-    )
-
-    phone = StringField('phone', validators=[DataRequired(), Length(
-        max=20, message="The input of phone is too long"), validate_phone])
-
-    genres = SelectMultipleField(
-        # TODO implement enum restriction
-        'genres', validators=[DataRequired()],
-        choices=genres
-    )
-    facebook_link = StringField(
-        'facebook_link', validators=[URL(message="Please provid a correct facebook url"), Length(max=500, message="The input of facebook link is too long")]
-    )
-
-    image_link = StringField(
-        'image_link', validators=[URL("Please provid a correct image link url"), Length(max=500, message="The input of image link is too long")]
-    )
-
-    website = StringField(
-        'website', validators=[URL("Please provid a correct website link url"), Length(max=500, message="The input of website is too long")]
     )
 
     seeking_talent = BooleanField(
         'seeking_talent'
     )
 
-    seeking_description = StringField(
-        'seeking_description'
-    )
-
 
 class ArtistForm(BaseForm):
-    # name = StringField('name', validators=[DataRequired(), Length(
-    #     max=100, message="The input of name is too long")])
-
-    # city = StringField(
-    #     'city', validators=[DataRequired(), Length(max=120, message="The input of city is too long")]
-    # )
-
-    state = SelectField(
-        'state', validators=[DataRequired()],
-        choices=states
-    )
-    phone = StringField('phone', validators=[DataRequired(), Length(
-        max=20,  message="The input of phone is too long"), validate_phone])
-
-    genres = SelectMultipleField(
-        # TODO implement enum restriction
-        'genres', validators=[DataRequired()],
-        choices=genres
-    )
-    facebook_link = StringField(
-        'facebook_link', validators=[URL(message="Please provid a correct facebook url"), Length(max=500, message="The input of facebook link is too long")]
-    )
-
-    image_link = StringField(
-        'image_link', validators=[URL("Please provid a correct image link url"), Length(max=500,  message="The input of image link is too long")]
-    )
-
-    website = StringField(
-        'website', validators=[URL("Please provid a correct website link url"), Length(max=500, message="The input of website is too long")]
-    )
 
     seeking_venue = BooleanField(
         'seeking_venue'
     )
 
-    seeking_description = StringField(
-        'seeking_description', validators=[Length(max=500,  message="The input of seeking description is too long")]
-    )
 
 # TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM
