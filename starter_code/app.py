@@ -17,9 +17,12 @@ from forms import *
 from flask_migrate import Migrate
 from sqlalchemy.orm import relationship
 from datetime import datetime
+
+
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
+
 
 app = Flask(__name__)
 moment = Moment(app)
@@ -27,6 +30,7 @@ app.config.from_object('config')
 db = SQLAlchemy(app)
 
 migrate = Migrate(app, db)
+
 
 #----------------------------------------------------------------------------#
 # Models.
@@ -236,19 +240,26 @@ def create_venue_form():
 
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
+    form = VenueForm(request.form)
+    if not form.validate():
+        for error in form.errors:
+            flash(form.errors[error])
+        return render_template('pages/home.html')
+
     try:
         venue = Venue(
             name=request.form['name'],
             city=request.form['city'],
+            address=request.form['address'],
             state=request.form['state'],
             phone=request.form['phone'],
-            # # genres=request.form.getlist('genres'),
-            # facebook_link=request.form['facebook_link'],
-            # image_link=request.form['image_link'],
-            # website=request.form['website'],
-            # seeking_venue=True if request.form.get(
-            #     'seeking_venue') == 'y' else False,
-            # seeking_description=request.form['seeking_description']
+            genres=request.form.getlist('genres'),
+            facebook_link=request.form['facebook_link'],
+            image_link=request.form['image_link'],
+            website=request.form['website'],
+            seeking_talent=True if request.form.get(
+                'seeking_talent') == 'y' else False,
+            seeking_description=request.form['seeking_description']
 
         )
         db.session.add(venue)
@@ -374,8 +385,14 @@ def edit_artist(artist_id):
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
 
+    form = ArtistForm(request.form)
+    if not form.validate():
+        for error in form.errors:
+            flash(form.errors[error])
+        return redirect(url_for('show_artist', artist_id=artist_id))
+
     artist = Artist.query.get(artist_id)
-    flash(request.form.getlist('genres'))
+
     try:
         artist.name = request.form['name']
         artist.city = request.form['city']
@@ -422,24 +439,34 @@ def edit_venue(venue_id):
 
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
+
+    form = VenueForm(request.form)
+    if not form.validate():
+        for error in form.errors:
+            flash(form.errors[error])
+        return redirect(url_for('show_venue', venue_id=venue_id))
+
     venue = Venue.query.get(venue_id)
     try:
         venue.name = request.form['name']
         venue.city = request.form['city']
         venue.state = request.form['state']
+        venue.address = request.form['address']
         venue.genres = request.form.getlist('genres')
         venue.phone = request.form['phone']
         venue.facebook_link = request.form['facebook_link']
         venue.image_link = request.form['image_link']
         venue.website = request.form['website']
         venue.seeking_talent = True if request.form.get(
-            'seeking_talent') == 'y' else False,
-        venue.seeking_description = requst.form['seeking_description']
-
+            'seeking_talent') == 'y' else False
+        flash("before descript")
+        venue.seeking_description = request.form['seeking_description']
+        flash("until commit")
         db.session.commit()
     except:
         db.session.rollback()
         print(sys.exc_info())
+        flash("errror")
     finally:
         db.session.close()
 
