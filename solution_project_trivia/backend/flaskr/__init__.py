@@ -42,7 +42,28 @@ def create_app(test_config=None):
         json_result = {"categories": results}
         return jsonify(json_result)
 
-    '''
+    @app.route('/categories/<int:category_id>/questions')
+    def questions_for_category(category_id):
+
+      query = Question.query.filter(Question.category == category_id).all()
+
+      total_questions = len(query)
+      current_category = category_id
+
+      questions = []
+      for element in query:
+          questions.append(element.format()['question'])
+      
+      result = {
+        "questions": questions,
+        "totalQuestions": total_questions,
+        "currentCategory": current_category
+      }
+
+      return jsonify(result)
+
+
+      '''
   @TODO:
   Create an endpoint to handle GET requests for questions,
   including pagination (every 10 questions).
