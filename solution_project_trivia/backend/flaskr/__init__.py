@@ -52,6 +52,9 @@ def create_app(test_config=None):
         questions = pagination(request, query)
         categories = Category.query.all()
 
+        if len(questions) == 0:
+            abort(404)
+
         return jsonify({
             "success": True,
             "questions": questions,

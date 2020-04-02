@@ -61,6 +61,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['total_questions'])
         self.assertEqual(data['current_category'], None)
 
+    def test_for_to_high_page(self):
+        result = self.client().get('/questions?page=99')
+        self.assertEqual(result.status_code, 404)
+
+        data = json.loads(result.data)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'resource not found')
+
     def test_create_question(self):
         question = {
             "question": "This is my question",
