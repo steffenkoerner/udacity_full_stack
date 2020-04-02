@@ -69,6 +69,30 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'resource not found')
 
+    def test_delete_question(self):
+        question = Question(
+            question="question",
+            answer="answer",
+            category=2,
+            difficulty=3
+        )
+        question.insert()
+
+        result = self.client().delete(f'/questions/{question.id}')
+        self.assertEqual(result.status_code, 200)
+
+        data = json.loads(result.data)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['question_id'], question.id)
+
+    def test_delete_non_existing_question(self):
+        result = self.client().delete('/questions/100000')
+        self.assertEqual(result.status_code, 422)
+
+        data = json.loads(result.data)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], "unprocessable")
+
     def test_create_question(self):
         question = {
             "question": "This is my question",
@@ -86,8 +110,6 @@ class TriviaTestCase(unittest.TestCase):
         # TODO: Check that questions is really inserted into the database
         # TODO: Delete the element afterwards
 
-    def test_delete_question(self):
-        pass
     """
     TODO
     Write at least one test for each test for successful operation and for expected errors.
