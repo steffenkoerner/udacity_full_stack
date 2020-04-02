@@ -48,7 +48,7 @@ def create_app(test_config=None):
       query = Question.query.filter(Question.category == category_id).all()
 
       total_questions = len(query)
-      current_category = category_id
+      current_category = category_id # TODO: Check if this values should be int (id) or string (name)
 
       questions = []
       for element in query:
@@ -61,6 +61,25 @@ def create_app(test_config=None):
       }
 
       return jsonify(result)
+
+    @app.route('/categories/questions')
+    def questions_for_site():
+      value = request.args.get('page', 1)
+
+      query = Question.query.all()
+
+      total_questions = len(query)
+      current_category = category_id # TODO: Check if this values should be int (id) or string (name)
+
+      questions = []
+      for element in query:
+          questions.append(element.format()['question'])
+      
+      result = {
+        "questions": questions,
+        "totalQuestions": total_questions,
+        "currentCategory": current_category
+      }
 
 
       '''
