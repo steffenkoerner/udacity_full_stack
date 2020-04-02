@@ -121,8 +121,13 @@ def create_app(test_config=None):
             data = request.get_json()
             search = data['searchTerm']
 
+            result = Question.query.filter(
+                Question.question.ilike(f'%{search}%')).all()
             return jsonify({
-                "success": True
+                "success": True,
+                "totalQuestions": len(result),
+                "currentCategory": None,
+                "questions": [question.format() for question in result],
             })
         except:
             abort(404)

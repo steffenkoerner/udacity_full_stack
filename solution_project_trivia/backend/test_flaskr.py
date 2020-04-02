@@ -131,9 +131,15 @@ class TriviaTestCase(unittest.TestCase):
 
         data = json.loads(result.data)
         self.assertTrue(data['success'])
-        # self.assertTrue(data['questions'])
-        # self.assertTrue(data['questions'])
-        # self.assertTrue(data['currentCategory'])
+        self.assertTrue(data['totalQuestions'])
+        self.assertTrue(data['questions'])
+
+    def test_search_without_search_string(self):
+        result = self.client().post('/questions/search', json={})
+        self.assertEqual(result.status_code, 404)
+
+        data = json.loads(result.data)
+        self.assertFalse(data['success'])
 
     """
     TODO
