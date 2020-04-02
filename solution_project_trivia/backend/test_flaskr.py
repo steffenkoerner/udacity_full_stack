@@ -66,7 +66,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(result.status_code, 404)
 
         data = json.loads(result.data)
-        self.assertEqual(data['success'], False)
+        self.assertFalse(data['success'])
         self.assertEqual(data['message'], 'resource not found')
 
     def test_delete_question(self):
@@ -82,7 +82,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(result.status_code, 200)
 
         data = json.loads(result.data)
-        self.assertEqual(data['success'], True)
+        self.assertTrue(data['success'])
         self.assertEqual(data['question_id'], question.id)
 
     def test_delete_non_existing_question(self):
@@ -90,7 +90,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(result.status_code, 422)
 
         data = json.loads(result.data)
-        self.assertEqual(data['success'], False)
+        self.assertFalse(data['success'])
         self.assertEqual(data['message'], "unprocessable")
 
     def test_create_question(self):
@@ -105,6 +105,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(result.status_code, 200)
 
         data = json.loads(result.data)
+        self.assertTrue(data['success'])
         deleted_question_id = data['question_id']
 
         result_delete = self.client().delete(
@@ -119,6 +120,20 @@ class TriviaTestCase(unittest.TestCase):
 
         result = self.client().post('/questions', json=question)
         self.assertEqual(result.status_code, 422)
+
+    def test_search_for_question(self):
+
+        search = {
+            "searchTerm": "was"
+        }
+        result = self.client().post('/questions/search', json=search)
+        self.assertEqual(result.status_code, 200)
+
+        data = json.loads(result.data)
+        self.assertTrue(data['success'])
+        # self.assertTrue(data['questions'])
+        # self.assertTrue(data['questions'])
+        # self.assertTrue(data['currentCategory'])
 
     """
     TODO

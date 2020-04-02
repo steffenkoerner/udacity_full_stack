@@ -119,7 +119,11 @@ def create_app(test_config=None):
     def find_questions():
         try:
             data = request.get_json()
-            search = data['']
+            search = data['searchTerm']
+
+            return jsonify({
+                "success": True
+            })
         except:
             abort(404)
 
