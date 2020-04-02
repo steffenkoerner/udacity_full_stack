@@ -32,23 +32,23 @@ class TriviaTestCase(unittest.TestCase):
 
     def test_get_all_categories(self):
         result = self.client().get('/categories')
-        self.assertEqual(result.status_code,200)
+        self.assertEqual(result.status_code, 200)
 
         data = json.loads(result.data)
         self.assertTrue(data['categories'])
-        self.assertEqual(len(data['categories']),6)
+        self.assertEqual(len(data['categories']), 6)
 
     def test_get_questions_for_category(self):
         result = self.client().get('/categories/1/questions')
-        self.assertEqual(result.status_code,200)
+        self.assertEqual(result.status_code, 200)
 
         data = json.loads(result.data)
         self.assertTrue(data['questions'])
         self.assertTrue(data['totalQuestions'])
         self.assertTrue(data['currentCategory'])
 
-        self.assertEqual(len(data['questions']),3)
-        self.assertEqual(data['totalQuestions'],3)
+        self.assertEqual(len(data['questions']), 3)
+        self.assertEqual(data['totalQuestions'], 3)
         self.assertTrue(data['currentCategory'], 1)
 
     # def test_to_get_questions_for_page(self):
@@ -60,18 +60,17 @@ class TriviaTestCase(unittest.TestCase):
             "question": "This is my question",
             "answer": "This is my answer",
             "difficulty": 2,
-            "category": 1, 
-            }
+            "category": 1,
+        }
 
         result = self.client().post('/questions', json=question)
-        self.assertEqual(result.status_code,200)
+        self.assertEqual(result.status_code, 200)
 
         # data = json.loads(result.data)
         # self.client().delete('/questions/' + data['id'])
 
         # TODO: Check that questions is really inserted into the database
         # TODO: Delete the element afterwards
-
 
     def test_delete_question(self):
         pass
