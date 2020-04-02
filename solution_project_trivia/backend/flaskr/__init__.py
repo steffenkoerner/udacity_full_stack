@@ -58,9 +58,9 @@ def create_app(test_config=None):
         return jsonify({
             "success": True,
             "questions": questions,
-            "total_questions": len(query),
+            "totalQuestions": len(query),
             "categories": {category.id: category.type for category in categories},
-            "current_category": None
+            "currentCategory": None
         })
 
     @app.route('/questions/<int:question_id>', methods=['DELETE'])

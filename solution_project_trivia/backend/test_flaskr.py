@@ -58,8 +58,8 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(result.data)
         self.assertTrue(data['success'])
         self.assertTrue(data['questions'])
-        self.assertTrue(data['total_questions'])
-        self.assertEqual(data['current_category'], None)
+        self.assertTrue(data['totalQuestions'])
+        self.assertEqual(data['currentCategory'], None)
 
     def test_for_to_high_page(self):
         result = self.client().get('/questions?page=99')
