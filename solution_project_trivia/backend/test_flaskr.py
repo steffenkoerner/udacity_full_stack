@@ -141,6 +141,27 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(result.data)
         self.assertFalse(data['success'])
 
+    def test_play_quiz(self):
+
+        quiz = {
+            "previous_questions": [],
+            "quiz_category": 1
+        }
+
+        result = self.client().post('/quizzes', json=quiz)
+        self.assertEqual(result.status_code, 200)
+
+        data = json.loads(result.data)
+        self.assertTrue(data['success'])
+
+    def test_play_quiz_with_invalid_data(self):
+
+        result = self.client().post('/quizzes', json={})
+        self.assertEqual(result.status_code, 422)
+
+        data = json.loads(result.data)
+        self.assertFalse(data['success'])
+
     """
     TODO
     Write at least one test for each test for successful operation and for expected errors.

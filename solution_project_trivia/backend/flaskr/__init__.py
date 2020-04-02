@@ -105,16 +105,7 @@ def create_app(test_config=None):
             })
         except:
             abort(422)
-        '''
-  @TODO:
-  Create a POST endpoint to get questions based on a search term.
-  It should return any questions for whom the search term
-  is a substring of the question.
 
-  TEST: Search by any phrase. The questions list will update to include
-  only question that include that string within their question.
-  Try using the word "title" to start.
-  '''
     @app.route('/questions/search', methods=['POST'])
     def find_questions():
         try:
@@ -158,7 +149,7 @@ def create_app(test_config=None):
             }
             return jsonify(result)
         except:
-            abort()
+            abort(404)
 
         '''
   @TODO:
@@ -173,7 +164,18 @@ def create_app(test_config=None):
   '''
     @app.route('/quizzes', methods=['POST'])
     def play_quiz():
-        pass
+
+        try:
+            data = request.get_json()
+            category = data['quiz_category']
+            previous_questions = data['previous_questions']
+
+            return jsonify({
+                "success": True,
+
+            })
+        except:
+            abort(422)
 
     @app.errorhandler(404)
     def not_found(error):
