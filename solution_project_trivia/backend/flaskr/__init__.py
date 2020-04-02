@@ -140,7 +140,7 @@ def create_app(test_config=None):
             total_questions = len(query)
             questions = []
             for element in query:
-                questions.append(element.format()['question'])
+                questions.append(element.format())
 
             result = {
                 "questions": questions,
