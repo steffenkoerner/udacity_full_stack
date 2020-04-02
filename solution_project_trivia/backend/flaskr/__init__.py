@@ -180,7 +180,7 @@ def create_app(test_config=None):
 
             result = {
                 "success": True,
-                "currentQuestion": new_question.format(),
+                "question": new_question.format(),
                 "previousQuestions": previous_questions
             }
 
