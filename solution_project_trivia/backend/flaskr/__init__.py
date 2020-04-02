@@ -170,12 +170,28 @@ def create_app(test_config=None):
             category = data['quiz_category']
             previous_questions = data['previous_questions']
 
-            return jsonify({
-                "success": True,
+            new_questions = Question.query.filter_by(category=category).all()
 
-            })
+            random_question_index = random.randint(0, len(new_questions)-1)
+            new_question = new_questions[random_question_index]
+
+            previous_questions.append(new_question.format())
+
+            result = {
+                "success": True,
+                "currentQuestion": new_question.format(),
+                "previousQuestions": previous_questions
+            }
+
+            return jsonify(result)
+
         except:
             abort(422)
+
+          # showAnswer: false,
+          # previousQuestions: previousQuestions,
+          # guess: '',
+          # forceEnd: result.question ? false : true
 
     @app.errorhandler(404)
     def not_found(error):

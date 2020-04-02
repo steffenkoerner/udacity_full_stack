@@ -153,6 +153,8 @@ class TriviaTestCase(unittest.TestCase):
 
         data = json.loads(result.data)
         self.assertTrue(data['success'])
+        self.assertTrue(data['currentQuestion'])
+        self.assertTrue(data['previousQuestions'])
 
     def test_play_quiz_with_invalid_data(self):
 
@@ -161,6 +163,7 @@ class TriviaTestCase(unittest.TestCase):
 
         data = json.loads(result.data)
         self.assertFalse(data['success'])
+        self.assertEqual(data["message"], "unprocessable")
 
     """
     TODO
