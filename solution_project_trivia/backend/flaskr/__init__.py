@@ -167,10 +167,11 @@ def create_app(test_config=None):
 
         try:
             data = request.get_json()
-            category = data['quiz_category']
+            category = data['quiz_category']['type']
             previous_questions = data['previous_questions']
 
-            new_questions = Question.query.filter_by(category=category).all()
+            new_questions = Question.query.filter(
+                category == category).all()
 
             random_question_index = random.randint(0, len(new_questions)-1)
             new_question = new_questions[random_question_index]
