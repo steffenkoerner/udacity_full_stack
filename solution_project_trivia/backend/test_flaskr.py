@@ -51,10 +51,30 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['totalQuestions'],3)
         self.assertTrue(data['currentCategory'], 1)
 
-    def test_to_get_questions_for_page(self):
-        result = self.client().get('/questions?page=1')
-        self.assertEqual(result.status_code, 200)
+    # def test_to_get_questions_for_page(self):
+    #     result = self.client().get('/questions?page=1')
+    #     self.assertEqual(result.status_code, 200)
 
+    def test_create_question(self):
+        question = {
+            "question": "This is my question",
+            "answer": "This is my answer",
+            "difficulty": 2,
+            "category": 1, 
+            }
+
+        result = self.client().post('/questions', json=question)
+        self.assertEqual(result.status_code,200)
+
+        # data = json.loads(result.data)
+        # self.client().delete('/questions/' + data['id'])
+
+        # TODO: Check that questions is really inserted into the database
+        # TODO: Delete the element afterwards
+
+
+    def test_delete_question(self):
+        pass
     """
     TODO
     Write at least one test for each test for successful operation and for expected errors.
