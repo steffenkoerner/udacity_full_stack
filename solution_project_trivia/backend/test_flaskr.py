@@ -101,14 +101,24 @@ class TriviaTestCase(unittest.TestCase):
             "category": 1,
         }
 
-        # result = self.client().post('/questions', json=question)
-        # self.assertEqual(result.status_code, 200)
+        result = self.client().post('/questions', json=question)
+        self.assertEqual(result.status_code, 200)
 
-        # data = json.loads(result.data)
-        # self.client().delete('/questions/' + data['id'])
+        data = json.loads(result.data)
+        deleted_question_id = data['question_id']
 
-        # TODO: Check that questions is really inserted into the database
-        # TODO: Delete the element afterwards
+        result_delete = self.client().delete(
+            f'/questions/{deleted_question_id}')
+
+    def test_create_question_with_invalid_input(self):
+        question = {
+            "answer": "answer",
+            "difficulty": 1,
+            "category": 2
+        }
+
+        result = self.client().post('/questions', json=question)
+        self.assertEqual(result.status_code, 200)
 
     """
     TODO
