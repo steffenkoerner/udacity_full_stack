@@ -44,12 +44,12 @@ class TriviaTestCase(unittest.TestCase):
 
         data = json.loads(result.data)
         self.assertTrue(data['questions'])
-        self.assertTrue(data['totalQuestions'])
-        self.assertTrue(data['currentCategory'])
+        self.assertTrue(data['total_questions'])
+        self.assertTrue(data['current_category'])
 
         self.assertEqual(len(data['questions']), 3)
-        self.assertEqual(data['totalQuestions'], 3)
-        self.assertTrue(data['currentCategory'], 1)
+        self.assertEqual(data['total_questions'], 3)
+        self.assertTrue(data['current_category'], 1)
 
     def test_to_get_questions_for_page(self):
         result = self.client().get('/questions?page=1')
@@ -58,8 +58,8 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(result.data)
         self.assertTrue(data['success'])
         self.assertTrue(data['questions'])
-        self.assertTrue(data['totalQuestions'])
-        self.assertEqual(data['currentCategory'], None)
+        self.assertTrue(data['total_questions'])
+        self.assertEqual(data['current_category'], None)
 
     def test_for_to_high_page(self):
         result = self.client().get('/questions?page=99')
@@ -131,7 +131,7 @@ class TriviaTestCase(unittest.TestCase):
 
         data = json.loads(result.data)
         self.assertTrue(data['success'])
-        self.assertTrue(data['totalQuestions'])
+        self.assertTrue(data['total_questions'])
         self.assertTrue(data['questions'])
 
     def test_search_without_search_string(self):

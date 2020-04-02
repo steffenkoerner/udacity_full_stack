@@ -58,9 +58,9 @@ def create_app(test_config=None):
         return jsonify({
             "success": True,
             "questions": questions,
-            "totalQuestions": len(query),
+            "total_questions": len(query),
             "categories": {category.id: category.type for category in categories},
-            "currentCategory": None
+            "current_category": None
         })
 
     @app.route('/questions/<int:question_id>', methods=['DELETE'])
@@ -116,8 +116,8 @@ def create_app(test_config=None):
                 Question.question.ilike(f'%{search}%')).all()
             return jsonify({
                 "success": True,
-                "totalQuestions": len(result),
-                "currentCategory": None,
+                "total_questions": len(result),
+                "current_category": None,
                 "questions": [question.format() for question in result],
             })
         except:
@@ -144,8 +144,8 @@ def create_app(test_config=None):
 
             result = {
                 "questions": questions,
-                "totalQuestions": total_questions,
-                "currentCategory": category_id
+                "total_questions": total_questions,
+                "current_category": category_id
             }
             return jsonify(result)
         except:
