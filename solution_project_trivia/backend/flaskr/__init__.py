@@ -115,15 +115,22 @@ def create_app(test_config=None):
   only question that include that string within their question.
   Try using the word "title" to start.
   '''
+    @app.route('/questions/search', methods=['POST'])
+    def find_questions():
+        try:
+            data = request.get_json()
+            search = data['']
+        except:
+            abort(404)
 
         '''
-  @TODO:
-  Create a GET endpoint to get questions based on category.
+      @TODO:
+      Create a GET endpoint to get questions based on category.
 
-  TEST: In the "List" tab / main screen, clicking on one of the
-  categories in the left column will cause only questions of that
-  category to be shown.
-  '''
+      TEST: In the "List" tab / main screen, clicking on one of the
+      categories in the left column will cause only questions of that
+      category to be shown.
+      '''
     @app.route('/categories/<int:category_id>/questions')
     def questions_for_category(category_id):
 

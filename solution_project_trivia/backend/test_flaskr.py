@@ -118,7 +118,7 @@ class TriviaTestCase(unittest.TestCase):
         }
 
         result = self.client().post('/questions', json=question)
-        self.assertEqual(result.status_code, 200)
+        self.assertEqual(result.status_code, 422)
 
     """
     TODO
