@@ -43,14 +43,10 @@ def create_app(test_config=None):
     @app.route('/categories')
     def categories():
         categories = Category.query.order_by(Category.type).all()
-        results = []
-        for category in categories:
-            result = category.format()['type']
-            results.append(result)
 
         json_result = {
             "success": True,
-            "categories": results}
+            "categories": {category.id: category.type for category in categories}}
         return jsonify(json_result)
 
     @app.route('/questions')
