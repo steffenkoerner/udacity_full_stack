@@ -144,7 +144,7 @@ class TriviaTestCase(unittest.TestCase):
     def test_play_quiz(self):
 
         quiz = {
-            "previous_questions": [],
+            "previous_questions": [21],
             "quiz_category": {"type": "Science", "id": 1}
         }
 
