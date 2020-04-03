@@ -112,14 +112,16 @@ def create_app(test_config=None):
             data = request.get_json()
             search = data['searchTerm']
 
-            result = Question.query.filter(
+            query = Question.query.filter(
                 Question.question.ilike(f'%{search}%')).all()
-            return jsonify({
+
+            result = {
                 "success": True,
-                "total_questions": len(result),
-                "current_category": None,
-                "questions": [question.format() for question in result],
-            })
+                "total_questions": len(query),
+                "current_category": 1,
+                "questions": [question.format() for question in query],
+            }
+            return jsonify(result)
         except:
             abort(404)
 
@@ -167,21 +169,18 @@ def create_app(test_config=None):
 
         try:
             data = request.get_json()
-            category = data['quiz_category']['type']
+            category = data['quiz_category']['id']
             previous_questions = data['previous_questions']
 
             new_questions = Question.query.filter(
-                category == category).all()
+                Question.category == category).all()
 
             random_question_index = random.randint(0, len(new_questions)-1)
             new_question = new_questions[random_question_index]
 
-            previous_questions.append(new_question.format())
-
             result = {
                 "success": True,
                 "question": new_question.format(),
-                "previousQuestions": previous_questions
             }
 
             return jsonify(result)

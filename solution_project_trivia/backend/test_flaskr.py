@@ -154,7 +154,6 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(result.data)
         self.assertTrue(data['success'])
         self.assertTrue(data['question'])
-        self.assertTrue(data['previousQuestions'])
 
     def test_play_quiz_with_invalid_data(self):
 
