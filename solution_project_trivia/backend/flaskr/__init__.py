@@ -32,6 +32,13 @@ def create_app(test_config=None):
     '''
   @TODO: Use the after_request decorator to set Access-Control-Allow
   '''
+    @app.after_request
+    def after_request(response):
+        response.headers.add('Access-Control-Allow-Headers',
+                             'Content-Type,Authorization,true')
+        response.headers.add('Access-Control-Allow-Methods',
+                             'GET,PATCH,POST,DELETE,OPTIONS')
+        return response
 
     @app.route('/categories')
     def categories():
@@ -172,11 +179,15 @@ def create_app(test_config=None):
             category = data['quiz_category']['id']
             previous_questions = data['previous_questions']
 
+            category = int(category)
             new_questions = Question.query.filter(
                 Question.category == category).all()
 
             random_question_index = random.randint(0, len(new_questions)-1)
             new_question = new_questions[random_question_index]
+
+            if not new_question:
+                return jsonify({})
 
             result = {
                 "success": True,
