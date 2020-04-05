@@ -159,3 +159,8 @@ def not_found(error):
         "error": 401,
         "message": "unauthorized"
     }), 401
+
+
+@app.errorhandler(AuthError)
+def auth_error(error):
+    return jsonify(error.error), error.status_code
