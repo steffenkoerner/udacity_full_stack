@@ -42,7 +42,6 @@ class TestSecureAPI(unittest.TestCase):
     def test_get_drink_details_without_rights(self):
         self.assertRaises(Exception, self.client().get, '/drinks-detail')
 
-
         # Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()
