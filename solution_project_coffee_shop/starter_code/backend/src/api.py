@@ -37,7 +37,7 @@ def get_drinks():
             "drinks": [drink.short() for drink in drinks]
         })
     except:
-        abort()
+        abort(422)
 
 
 '''
@@ -60,7 +60,7 @@ def get_drinks_detail():
             "drinks": [drink.long() for drink in drinks]
         })
     except:
-        abort()
+        abort(422)
 
 
 '''
@@ -86,7 +86,7 @@ def add_new_drink():
             "drinks": [drink.long()]
         })
     except:
-        abort()
+        abort(422)
 
 
 '''
@@ -101,7 +101,7 @@ def add_new_drink():
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks/<int:id>', methods=['PATCH'])
-def patch_drink():
+def patch_drink(id):
     try:
         data = request.get_json()
 
@@ -119,7 +119,7 @@ def patch_drink():
             "drinks": [drink.long()]
         })
     except:
-        abort()
+        abort(422)
 
 
 '''
@@ -135,7 +135,7 @@ def patch_drink():
 
 
 @app.route('/drinks/<int:id>', methods=['DELETE'])
-def patch_drink():
+def delete_drink(id):
     try:
         data = request.get_json()
 
@@ -151,7 +151,7 @@ def patch_drink():
             "drinks": [drink.long()]
         })
     except:
-        abort()
+        abort(422)
 
 
 # Error Handling
