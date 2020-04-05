@@ -35,7 +35,7 @@ def get_token_auth_header():
     auth_header = request.headers['Authorization']
     header_parts = auth_header.split(' ')
 
-    if len(header_parts != 2):
+    if len(header_parts) != 2:
         raise AuthError({
             'code': 'invalid_header',
             'description': 'Authorization header must contain two parts.'
@@ -50,36 +50,22 @@ def get_token_auth_header():
     return token
 
 
-'''
-@TODO implement check_permissions(permission, payload) method
-    @INPUTS
-        permission: string permission (i.e. 'post:drink')
-        payload: decoded jwt payload
-
-    it should raise an AuthError if permissions are not included in the payload
-        !!NOTE check your RBAC settings in Auth0
-    it should raise an AuthError if the requested permission string is not in the payload permissions array
-    return true otherwise
-'''
-
-
 def check_permissions(permission, payload):
-    return True
 
+    if 'permissions' not in payload:
+        raise AuthError({
+            'code': 'permissions not included',
+            'description': 'Check your RBAC settings as no permissions are included'
+        }, 401)
 
-'''
-@TODO implement verify_decode_jwt(token) method
-    @INPUTS
-        token: a json web token (string)
-
-    it should be an Auth0 token with key id (kid)
-    it should verify the token using Auth0 /.well-known/jwks.json
-    it should decode the payload from the token
-    it should validate the claims
-    return the decoded payload
-
-    !!NOTE urlopen has a common certificate error described here: https://stackoverflow.com/questions/50236117/scraping-ssl-certificate-verify-failed-error-for-http-en-wikipedia-org
-'''
+    permissions = payload['permissions']
+    if permission in permissions:
+        return True
+    else:
+        raise AuthError({
+            'code': 'No permission',
+            'description': 'You do not have permission to do this action'
+        }, 401)
 
 
 def verify_decode_jwt(token):
@@ -112,27 +98,30 @@ def verify_decode_jwt(token):
                 audience=API_AUDIENCE,
                 issuer='https://' + AUTH0_DOMAIN + '/'
             )
-
             return payload
-        except:
-            Exception('Not Implemented')
+
+        except jwt.ExpiredSignatureError:
+            raise AuthError({
+                'code': 'token_expired',
+                'description': 'Token expired.'
+            }, 401)
+
+        except jwt.JWTClaimsError:
+            raise AuthError({
+                'code': 'invalid_claims',
+                'description': 'Incorrect claims. Please, check the audience and issuer.'
+            }, 401)
+
+        except Exception:
+            raise AuthError({
+                'code': 'invalid_header',
+                'description': 'Unable to parse authentication token.'
+            }, 400)
 
     raise AuthError({
         'code': 'invalid_header',
                 'description': 'Unable to find the appropriate key.'
     }, 400)
-
-
-'''
-@TODO implement @requires_auth(permission) decorator method
-    @INPUTS
-        permission: string permission (i.e. 'post:drink')
-
-    it should use the get_token_auth_header method to get the token
-    it should use the verify_decode_jwt method to decode the jwt
-    it should use the check_permissions method validate claims and check the requested permission
-    return the decorator which passes the decoded payload to the decorated method
-'''
 
 
 def requires_auth(permission=''):
