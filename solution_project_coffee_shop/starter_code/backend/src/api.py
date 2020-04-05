@@ -29,7 +29,6 @@ CORS(app)
 '''
 @app.route('/drinks')
 def get_drinks():
-
     try:
         drinks = Drink.query.all()
 
@@ -51,6 +50,19 @@ def get_drinks():
 '''
 
 
+@app.route('/drinks-detail')
+def get_drinks_detail():
+    try:
+        drinks = Drink.query.all()
+
+        return jsonify({
+            "success": True,
+            "drinks": [drink.long() for drink in drinks]
+        })
+    except:
+        abort()
+
+
 '''
 @TODO implement endpoint
     POST /drinks
@@ -60,6 +72,21 @@ def get_drinks():
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks', methods=['POST'])
+def add_new_drink():
+    try:
+        data = request.get_json()
+        title = data['title']
+        recipe = data['recipe']
+        drink = Drink(title=title, recipe=recipe)
+        drink.insert()
+
+        return jsonify({
+            "success": True,
+            "drinks": [drink.long()]
+        })
+    except:
+        abort()
 
 
 '''
@@ -73,6 +100,26 @@ def get_drinks():
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the updated drink
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks/<int:id>', methods=['PATCH'])
+def patch_drink():
+    try:
+        data = request.get_json()
+
+        drink = Drink.query.filter(Drink.id == id).one_or_none()
+
+        if not drink:
+            abort(404)
+
+        drink.title = data['title']
+        drink.recipe = data['recipe']
+        drink.update()
+
+        return jsonify({
+            "success": True,
+            "drinks": [drink.long()]
+        })
+    except:
+        abort()
 
 
 '''
@@ -85,6 +132,26 @@ def get_drinks():
     returns status code 200 and json {"success": True, "delete": id} where id is the id of the deleted record
         or appropriate status code indicating reason for failure
 '''
+
+
+@app.route('/drinks/<int:id>', methods=['DELETE'])
+def patch_drink():
+    try:
+        data = request.get_json()
+
+        drink = Drink.query.filter(Drink.id == id).one_or_none()
+
+        if not drink:
+            abort(404)
+
+        drink.delete()
+
+        return jsonify({
+            "success": True,
+            "drinks": [drink.long()]
+        })
+    except:
+        abort()
 
 
 # Error Handling
