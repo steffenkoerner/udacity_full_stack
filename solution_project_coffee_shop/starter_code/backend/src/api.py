@@ -54,7 +54,7 @@ def get_drinks_detail(permission):
 '''
 @app.route('/drinks', methods=['POST'])
 @requires_auth('post:drinks')
-def add_new_drink():
+def add_new_drink(permission):
     try:
         data = request.get_json()
         title = data['title']
@@ -82,7 +82,7 @@ def add_new_drink():
 '''
 @app.route('/drinks/<int:id>', methods=['PATCH'])
 @requires_auth('patch:drinks')
-def patch_drink(id):
+def patch_drink(permission, id):
     try:
         data = request.get_json()
         drink = Drink.query.filter(Drink.id == id).one_or_none()
@@ -111,7 +111,7 @@ def patch_drink(id):
 '''
 @app.route('/drinks/<int:id>', methods=['DELETE'])
 @requires_auth('delete:drinks')
-def delete_drink(id):
+def delete_drink(permission, id):
     try:
         data = request.get_json()
         drink = Drink.query.filter(Drink.id == id).one_or_none()
