@@ -51,6 +51,7 @@ def get_drinks():
 
 
 @app.route('/drinks-detail')
+@requires_auth('get:drinks-detail')
 def get_drinks_detail():
     try:
         drinks = Drink.query.all()
