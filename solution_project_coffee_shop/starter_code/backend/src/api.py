@@ -57,8 +57,12 @@ def get_drinks_detail(permission):
 def add_new_drink(permission):
     try:
         data = request.get_json()
+
+        if 'title' not in data or 'recipe' not in data:
+            abort(422)
+
         title = data['title']
-        recipe = data['recipe']
+        recipe = json.dumps(data['recipe'])
         drink = Drink(title=title, recipe=recipe)
         drink.insert()
         return jsonify({
