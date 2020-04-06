@@ -92,8 +92,15 @@ def patch_drink(permission, id):
         drink = Drink.query.filter(Drink.id == id).one_or_none()
         if not drink:
             abort(404)
-        drink.title = data['title']
-        drink.recipe = data['recipe']
+
+        title = data.get('title', drink.title)
+
+        recipe = drink.recipe
+        if 'recipe' in data:
+            recipe = json.dumps(data['recipe'])
+
+        drink.title = title
+        drink.recipe = recipe
         drink.update()
         return jsonify({
             "success": True,
