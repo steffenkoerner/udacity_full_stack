@@ -2,3 +2,5 @@ pyjwt
 flask
 gunicorn
 pytest
+Werkzeug==0.16
+
