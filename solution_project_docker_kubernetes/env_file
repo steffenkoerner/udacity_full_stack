@@ -1,2 +1,2 @@
- JWT_SECRET='myjwtsecret'
+ JWT_SECRET='YourJWTSecret'
  LOG_LEVEL=DEBUG
