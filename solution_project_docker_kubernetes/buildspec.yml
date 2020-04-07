@@ -1,6 +1,10 @@
 ---
 version: 0.2
 
+env:
+  parameter-store:
+    JWT_SECRET: JWT_SECRET
+
 phases:
   install:
     commands:
@@ -34,6 +38,3 @@ phases:
       - ls
 artifacts:
   files: build.json
-env:
-  parameter-store:
-    JWT_SECRET: JWT_SECRET
